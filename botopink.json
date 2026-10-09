@@ -1,7 +1,8 @@
 {
   "name": "actions",
   "version": "0.0.1",
-  "description": "Bundled library — the server-action protocol both halves read and write: the state grammar and ActionState, the v1 envelope, the JSON-RPC body and the refresh value; pure .bp, erlang and commonJS",
+  "otp": "28",
+  "description": "The server-action protocol both halves read and write: the state grammar and ActionState, the v1 envelope, the JSON-RPC body and the refresh value; pure .bp, erlang and commonJS",
   "src": "src/",
   "entry": "root.bp",
   "target": "erlang",
@@ -13,5 +14,11 @@
     "rpc.bp",
     "refresh.bp",
     "id.bp"
-  ]
+  ],
+  "dependencies": {
+    "routing": {
+      "git": "https://github.com/botopink/routing.git",
+      "branch": "feat"
+    }
+  }
 }

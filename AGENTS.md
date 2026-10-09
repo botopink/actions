@@ -1,27 +1,29 @@
 # actions
 
-> Path: `libs/actions/`
-> Parent: [`../AGENTS.md`](../AGENTS.md) · Root: [`../../AGENTS.md`](../../AGENTS.md)
+> Repository: `botopink/actions` (`git@github.com:botopink/actions.git`) · in the meta checkout: `repository/actions/`
 
-The bundled `actions` library (decision 116 rule 2): the server-action protocol both
+The `actions` library (decision 116 rule 2): the server-action protocol both
 halves read and write — the `state` grammar and `ActionState`, the v1 result envelope,
 the JSON-RPC body and the `refresh` value — **one** implementation compiled for erlang
 and commonJS (`contracts.md § 3`). The server writes the envelope and reads the RPC
 body with it; the browser reads the envelope and writes the RPC body with it; neither
 framework keeps a copy or pins the literals — they are asserted once, here.
 
-**Bundled.** `build.zig`'s `bundled_packages` names it after `routing` (it imports
-routing): any program's `from "actions"` loads the copy embedded in the compiler, as
-`actions/<module>` (atoms `actions@<module>`), with no `dependencies` entry and never from
-this directory; listing `actions` in `dependencies` is refused. An edit here reaches a
-consumer only through a rebuilt compiler.
+**A library of its own** (decision 326). It was bundled with the compiler until
+`03-bundled-libs/138` moved it here with its history; the compiler now embeds std alone.
+A program that imports `from "actions"` declares it in `dependencies` (decision 242) —
+`{ "actions": { "git": "https://github.com/botopink/actions.git", "branch": "feat" } }`; inside the meta checkout that entry
+resolves by name through the `repository/` root (`repository/actions`), elsewhere
+through the install store. Without the entry, `from "actions"` is
+`unresolved import source "actions" — declare it in botopink.json "dependencies"`.
+It declares `routing` the same way — the one package-to-package edge of the five.
 
 It names no field and no header: the hidden form field and the action header are the
 deployment's values, passed to both sides by whoever wires them (decision 114 item 7).
 
 Pure `.bp` only (decision 117 rule 8): no `#[@External]` cell, no `declare fn`, no
 `.erl` / `.mjs` sidecar, no framework name under `src/`. It imports `std` (`json`,
-`encoding`, `hash`) and the bundled `routing` (`navigation`), nothing else. JSON is written with
+`encoding`, `hash`) and `routing` (`navigation`, a declared dependency), nothing else. JSON is written with
 std's `json.quote` / `json.array` / `json.object` and read with std's `json.decode`
 (member order kept, duplicates refused — the same botopink on both targets) and
 `Json`'s own readers (`field`, `kindName`, `isObject`, `str`, `items`); the library
@@ -42,8 +44,8 @@ actions/
 └── test/              state_test · envelope_test · rpc_test · refresh_test · id_test (suite `actions:`)
 ```
 
-Consumers: `import {envelope.writeEnvelope, state.writeState} from "actions";` —
-bundled, so no `dependencies` entry (listing it is refused).
+Consumers: `import {envelope.writeEnvelope, state.writeState} from "actions";` — with
+`actions` declared in `dependencies` (decision 242).
 
 ## Surface and wires
 
@@ -58,10 +60,9 @@ bundled, so no `dependencies` entry (listing it is refused).
 ## Testing
 
 ```sh
-cd libs/actions
-../../zig-out/bin/botopink test --target erlang
-../../zig-out/bin/botopink test --target commonJS
-../../zig-out/bin/botopink format --check src test
+../botopink-lang/zig-out/bin/botopink test --target erlang
+../botopink-lang/zig-out/bin/botopink test --target commonJS
+../botopink-lang/zig-out/bin/botopink format --check src test
 ```
 
 24 tests (state 7, envelope 7, rpc 4, refresh 1, id 5), green on both rows; every expected
@@ -79,7 +80,7 @@ text is a literal. `zig build test-libs` runs the two cells.
   on: bind a `case` over a `@Result` to a `val`, then `r.unwrapOr(record)` in the `else`
   of an `if … return … else { … }`. `parseActionState` matches `Ok(e)` / `Error(msg)`
   directly instead.
-- A bundled library is compiled like any consumer of std: a `behavior` default or
+- This library is compiled like any consumer of std: a `behavior` default or
   templated method (`String.chars`, `Bool.negate`, …) is a `String.prototype` /
   `Boolean.prototype` patch on commonJS that only a module using it installs. std's
   `json.decode` once relied on two and failed from here (`s.chars is not a
@@ -88,3 +89,24 @@ text is a literal. `zig build test-libs` runs the two cells.
 - `asserts.errorText` takes `@Result<void, string>`; the tests read an `Error` payload
   through a local `case` helper instead.
 - Non-ASCII literals are truncated on erlang, so every message text is ASCII.
+
+## Local gate
+
+`scripts/git-hooks/pre-commit` is the tracked pre-commit gate, self-contained:
+it sources `scripts/git-hooks/lib/runner-standalone.sh` from this repository and
+reaches nothing outside it, so a standalone clone, a checkout inside the botopink
+meta workspace and a worktree run the same gate. Install it once per clone:
+
+```sh
+git config core.hooksPath scripts/git-hooks
+```
+
+The repository is one plain package, so the gate's test stage runs
+`botopink test --target <t>` at the root on each target `botopink.json` declares
+(`erlang`, `commonJS`). Never commit with `--no-verify`; fix the red instead.
+`scripts/git-hooks/pre-commit` and `scripts/git-hooks/lib/runner-standalone.sh`
+are one text across every library repository: the meta repository's
+`hook-integrity` workflow compares the bytes (its check 4), so a change to either
+lands in all of them together. CI: `.github/workflows/test.yml` runs the same
+package on linux and macos, on each declared target, with the compiler built from
+`botopink/botopink-lang` `feat`.
