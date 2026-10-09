@@ -30,8 +30,7 @@ pub fn isActionId(id: string) -> bool {
     var ok = id.length() == 26 && id.startsWith("a_");
     var i = 2;
     while (i < 26) {
-        if ("0123456789abcdef".contains(id.at(i).unwrapOr("x")) == false)
-            ok = false;
+        if ("0123456789abcdef".contains(id.at(i) ?? "x") == false) ok = false;
         i = i + 1;
     }
     return ok;

@@ -32,7 +32,7 @@ pub type ActionState(
 // body is not dispatched on erlang (`unwrapOr/2 undefined`) nor on commonJS.
 fn fieldErrorOf(fields: Array<#(string, string)>, name: string) -> string {
     val hit = fields.filter({ f -> f._0 == name });
-    return hit.at(0).unwrapOr(#("", ""))._1;
+    return (hit.at(0) ?? #("", ""))._1;
 }
 
 // The state before any submission: `ok`, the given message, no redirect, no
@@ -55,7 +55,7 @@ pub fn writeState(message: string, fields: Array<#(string, string)>) -> string {
 pub fn parseState(state: string) -> #(string, Array<#(string, string)>) {
     val pairs = encoding.formParse(state);
     val messages = pairs.filter({ p -> p._0 == "message" });
-    val message = messages.at(0).unwrapOr(#("", ""))._1;
+    val message = (messages.at(0) ?? #("", ""))._1;
     val fields = pairs
         .filter({ p -> p._0.startsWith("f.") })
         .map({ p -> #(p._0.slice(2, p._0.length()), p._1) });

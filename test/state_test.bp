@@ -25,7 +25,7 @@ test "actions: parseState reads the pinned literal back" {
     );
     try asserts.equals(parsed._0, "Title must be at least 3 characters");
     try asserts.equals(parsed._1.length, 1);
-    val f = parsed._1.at(0).unwrapOr(#("", ""));
+    val f = parsed._1.at(0) ?? #("", "");
     try asserts.equals(f._0, "title");
     try asserts.equals(f._1, "Too short");
 }
@@ -40,7 +40,7 @@ test "actions: parseState ignores a key that is neither message nor f." {
     val parsed = parseState("ok=true&message=hi&x.title=no&f.name=bad");
     try asserts.equals(parsed._0, "hi");
     try asserts.equals(parsed._1.length, 1);
-    try asserts.equals(parsed._1.at(0).unwrapOr(#("", ""))._0, "name");
+    try asserts.equals((parsed._1.at(0) ?? #("", ""))._0, "name");
 }
 
 test "actions: a value with &, =, % and a space round-trips" {
@@ -49,7 +49,7 @@ test "actions: a value with &, =, % and a space round-trips" {
     try asserts.equals(s, "message=a%26b%3Dc%25d%20e&f.q=a%26b%3Dc%25d%20e");
     val parsed = parseState(s);
     try asserts.equals(parsed._0, odd);
-    try asserts.equals(parsed._1.at(0).unwrapOr(#("", ""))._1, odd);
+    try asserts.equals((parsed._1.at(0) ?? #("", ""))._1, odd);
 }
 
 test "actions: fieldError of an absent name is empty; newActionState is ok with no fields" {
