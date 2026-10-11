@@ -1,5 +1,7 @@
 # actions
 
+`decisions-taken.md` is generated — from the meta repository's `specs/<milestone>/decisions-taken.md` by `scripts/decisions-split.py`; edit it there, never here.
+
 > Repository: `botopink/actions` (`git@github.com:botopink/actions.git`) · in the meta checkout: `repository/actions/`
 
 The `actions` library (decision 116 rule 2): the server-action protocol both
