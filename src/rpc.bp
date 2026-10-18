@@ -30,7 +30,7 @@ fn isOne(v: Json) -> bool {
     };
 }
 
-fn errorOf(r: @Result<Json, string>) -> string {
+fn errorOf(r: Result<Json, string>) -> string {
     val t = case r {
         Ok(_) -> "";
         Error(e) -> e;
@@ -38,7 +38,7 @@ fn errorOf(r: @Result<Json, string>) -> string {
     return t;
 }
 
-pub fn parseRpcBody(body: string) -> @Result<RpcCall, string> {
+pub fn parseRpcBody(body: string) -> Result<RpcCall, string> {
     // An empty or whitespace-only body is named as such, not as "not JSON".
     if (body.trim() == "") throw "actions.parseRpcBody: the body is empty";
     val doc = decode(body);

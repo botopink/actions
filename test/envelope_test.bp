@@ -29,7 +29,7 @@ fn same(a: ActionEnvelope, b: ActionEnvelope) -> bool {
         && (a.n == b.n && a.payload == b.payload);
 }
 
-fn envErr(r: @Result<ActionEnvelope, string>) -> string {
+fn envErr(r: Result<ActionEnvelope, string>) -> string {
     val t = case r {
         Ok(_) -> "";
         Error(e) -> e;

@@ -3,7 +3,7 @@
 import {testing.asserts} from "std";
 import {rpc.RpcCall, rpc.writeRpcBody, rpc.parseRpcBody};
 
-fn rpcErr(r: @Result<RpcCall, string>) -> string {
+fn rpcErr(r: Result<RpcCall, string>) -> string {
     val t = case r {
         Ok(_) -> "";
         Error(e) -> e;

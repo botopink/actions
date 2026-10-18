@@ -79,19 +79,19 @@ fn wrongKind(key: string, want: string, got: Json) -> string {
 }
 
 // The string at `key`, `""` when absent; an `Error` when it is not a string.
-fn readStr(root: Json, key: string) -> @Result<string, string> {
+fn readStr(root: Json, key: string) -> Result<string, string> {
     val v = root.field(key) ?? Json.Str(value: "");
     if (v.kindName() != "a string") throw wrongKind(key, "a string", v);
     return v.str();
 }
 
-fn readBool(root: Json, key: string) -> @Result<bool, string> {
+fn readBool(root: Json, key: string) -> Result<bool, string> {
     val v = root.field(key) ?? Json.Bool(value: false);
     if (v.kindName() != "a boolean") throw wrongKind(key, "a boolean", v);
     return boolOf(v);
 }
 
-fn readStrings(root: Json, key: string) -> @Result<Array<string>, string> {
+fn readStrings(root: Json, key: string) -> Result<Array<string>, string> {
     val v = root.field(key) ?? Json.Arr(items: []);
     if (v.kindName() != "an array")
         throw wrongKind(key, "an array of strings", v);
@@ -101,7 +101,7 @@ fn readStrings(root: Json, key: string) -> @Result<Array<string>, string> {
     return xs.map({ x -> x.str() });
 }
 
-pub fn readEnvelope(text: string) -> @Result<ActionEnvelope, string> {
+pub fn readEnvelope(text: string) -> Result<ActionEnvelope, string> {
     val doc = decode(text);
     if (doc.isError())
         throw ["actions.readEnvelope: not JSON (", errorOf(doc), ")"].join("");
@@ -131,7 +131,7 @@ pub fn readEnvelope(text: string) -> @Result<ActionEnvelope, string> {
     );
 }
 
-fn errorOf(r: @Result<Json, string>) -> string {
+fn errorOf(r: Result<Json, string>) -> string {
     val t = case r {
         Ok(_) -> "";
         Error(e) -> e;
