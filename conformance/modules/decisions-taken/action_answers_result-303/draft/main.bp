@@ -1,0 +1,3 @@
+//// Decision 303 — An action answers `@Result`; there is no `ActionOutcome`.
+
+pub fn main() -> void {}
