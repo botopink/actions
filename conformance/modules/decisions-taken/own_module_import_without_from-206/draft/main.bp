@@ -8,8 +8,6 @@ import {
 } from "actions";
 import {envelope.banner};
 
-mod envelope;
-
 pub fn main() -> void {
     val text = writeEnvelope(
         ActionEnvelope(

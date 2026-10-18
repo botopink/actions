@@ -1,4 +1,4 @@
-//// The form's summary line, reached from `main` through `mod form;`.
+//// The form's summary line, imported by `main` by its path.
 
 import {state.parseState} from "actions";
 

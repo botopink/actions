@@ -2,10 +2,9 @@
 
 import {io.terminal} from "std";
 import {state.writeState} from "actions";
-
-mod form;
+import {form.summary};
 
 pub fn main() -> void {
     val state = writeState("Check the form", [#("email", "taken")]);
-    terminal.print(form.summary(state));
+    terminal.print(summary(state));
 }
