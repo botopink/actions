@@ -1,3 +1,9 @@
 # Decision 303 — An action answers `@Result`; there is no `ActionOutcome`.
 
+The example is a newsletter action written as a plain function, `subscribe`, which answers `Task<Result<Subscribed, ActionError>>` like any function that can fail. `return Subscribed(email: email)` is its `Ok`. Each `throw` is an `Error` value, not a raise: `ActionError.Unauthorized(message: …)` when there is no session, and `ActionError.Input(fields: …)` when the e-mail has no `@`, with the field messages keyed by name in a `Dict<string, Array<string>>`. `ActionError` is the library's sum type, with one case per outcome, and each case is an HTTP status on the wire. `Input`, `BadRequest`, `Unauthorized`, `Forbidden`, `NotFound`, `Conflict`, `TooManyRequests` and `Internal` are the whole list. There is no `ActionOutcome` record, no `ActionErrorCode` and no `orError()`.
+
+The caller gets the same `Result` back. `show` reads it with one exhaustive `case`: `Ok(s)`, `Error(Input(fields))`, `Error(Unauthorized(message))` and `Error(_)` for the remaining cases. `welcome` reads it with `try await`, so an `Error` from `subscribe` becomes `welcome`'s own answer without being unwrapped. The program prints `subscribed ana@example.com`, `check email`, `log in: User must be logged in.` and `welcome ana@example.com`. The envelope's `{data}` / `{error}` JSON, which carries the outcome in the envelope's `payload`, is protocol only and never shows up in this code. The `#[action]` wrapper that registers such a function and answers `Error(Input(…))` before calling it is rakun's.
+
+Cells in this repository that prove it: none yet. `ActionError` and its codec in `src/outcome.bp` arrive with front 150 s23, step 1. Until that step lands, the example does not build, because `outcome.ActionError` is not yet in the library.
+
 [draft/main.bp](draft/main.bp)

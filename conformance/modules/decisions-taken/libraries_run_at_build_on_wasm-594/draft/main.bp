@@ -1,3 +1,14 @@
 //// Decision 594 — Every library runs at build on the wasm comptime runtime (434), jhonstart first; a function only Erlang or Node can run is a located error there.
 
-pub fn main() -> void {}
+import {io.terminal} from "std";
+import {id.deriveActionId, id.isActionId, state.writeState} from "actions";
+
+pub fn main() -> void {
+    // `actions` runs at build on the wasm comptime runtime, whatever the target.
+    val atBuild = comptime deriveActionId("s3cret", "comments", "add", "build-7");
+    val atRun = deriveActionId("s3cret", "comments", "add", "build-7");
+    terminal.print(atBuild);
+    terminal.print(atBuild == atRun);
+    terminal.print(isActionId(atBuild));
+    terminal.print(comptime writeState("Check the form", [#("email", "taken")]));
+}

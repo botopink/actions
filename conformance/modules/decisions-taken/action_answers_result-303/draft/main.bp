@@ -1,3 +1,46 @@
 //// Decision 303 — An action answers `@Result`; there is no `ActionOutcome`.
 
-pub fn main() -> void {}
+import {io.terminal} from "std";
+import {collections.Dict} from "std";
+import {outcome.ActionError} from "actions";
+
+pub type Subscribed(email: string)
+
+// The action's body: `return v` is `Ok(v)`, `throw e` an `Error(e)` value.
+fn subscribe(
+    email: string,
+    session: ?string,
+) -> Task<Result<Subscribed, ActionError>> {
+    if (session == null)
+        throw ActionError.Unauthorized(message: "User must be logged in.");
+    if (!email.contains("@"))
+        throw ActionError.Input(
+            fields: Dict.ofEntries([#("email", ["must contain @"])]),
+        );
+    return Subscribed(email: email);
+}
+
+// A caller that only goes on when the action answered `Ok`.
+fn welcome(email: string, session: ?string) -> Task<Result<string, ActionError>> {
+    val s = try await subscribe(email, session);
+    return "welcome " + s.email;
+}
+
+fn show(r: Result<Subscribed, ActionError>) -> string {
+    return case r {
+        Ok(s) -> "subscribed " + s.email;
+        Error(Input(fields)) -> "check " + fields.keys().join(", ");
+        Error(Unauthorized(message)) -> "log in: " + message;
+        Error(_) -> "failed";
+    };
+}
+
+pub fn main() -> Task<void> {
+    terminal.print(show(await subscribe("ana@example.com", "s1")));
+    terminal.print(show(await subscribe("ana", "s1")));
+    terminal.print(show(await subscribe("ana@example.com", null)));
+    case await welcome("ana@example.com", "s1") {
+        Ok(text) -> terminal.print(text);
+        Error(_) -> terminal.print("no welcome");
+    }
+}

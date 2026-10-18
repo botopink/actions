@@ -1,3 +1,41 @@
 //// Decision 330 — `?T` is read with TypeScript's operators and has no methods; `result` goes; a type declared in a type is its associated type.
 
-pub fn main() -> void {}
+import {io.terminal} from "std";
+import {envelope.readEnvelope, envelope.parseActionState} from "actions";
+
+pub type Form {
+    // `Field` is declared in `Form`'s body, so it is `Form`'s associated type.
+    pub type Field(name: string, message: ?string)
+
+    pub fn fields(envelope: string) -> Array<Form.Field> {
+        return parseActionState(envelope).fields.map(
+            { f -> Form.Field(name: f._0, message: if (f._1 == "") null else f._1) },
+        );
+    }
+}
+
+fn hint(present: bool) -> ?fn(name: string) -> string {
+    return if (present)
+        fn(name: string) -> string {
+            return "fill in " + name;
+        }
+    else
+        null;
+}
+
+pub fn main() -> void {
+    val text = "{\"v\":1,\"ok\":false,\"state\":\"message=Check+the+form&f.email=taken\",\"revalidated\":[],\"redirect\":\"\",\"n\":\"\",\"payload\":\"\"}";
+    val read = readEnvelope(text);
+    terminal.print(read.isOk());
+    val revalidated = read.map({ e -> e.revalidated }).unwrapOr([]);
+    val fields: ?Array<Form.Field> = if (read.isOk())
+        Form.fields(text)
+    else
+        null;
+    val first = fields?.[0];
+    terminal.print(first?.name ?? "no field");
+    terminal.print(first?.message ?? hint(true)?.("email") ?? "");
+    terminal.print(hint(false)?.("email") ?? "no hint");
+    terminal.print(first!.name);
+    terminal.print((first?.message ?? "") == "" || revalidated.length > 0);
+}

@@ -1,0 +1,5 @@
+//// This package's own `envelope` module, named like the `actions` module it logs.
+
+pub fn banner(text: string) -> string {
+    return "envelope " + text;
+}

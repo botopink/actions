@@ -1,0 +1,8 @@
+//// The form's summary line, reached from `main` through `mod form;`.
+
+import {state.parseState} from "actions";
+
+pub fn summary(state: string) -> string {
+    val parsed = parseState(state);
+    return parsed._0 + ": " + parsed._1.map({ f -> f._0 }).join(", ");
+}

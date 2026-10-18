@@ -1,3 +1,24 @@
 //// Decision 206 — `import {…} from "<name>"` resolves only to a package — std, a bundled package or a declared dependency.
 
-pub fn main() -> void {}
+import {io.terminal} from "std";
+import {
+    envelope.ActionEnvelope,
+    envelope.writeEnvelope,
+    state.writeState,
+} from "actions";
+import {envelope.banner};
+
+mod envelope;
+
+pub fn main() -> void {
+    val text = writeEnvelope(
+        ActionEnvelope(
+            ok: true,
+            state: writeState("Saved", []),
+            revalidated: ["/posts"],
+            n: "",
+            payload: "",
+        ),
+    );
+    terminal.print(banner(text));
+}
