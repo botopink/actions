@@ -1,4 +1,4 @@
-//// Decision 303 — An action answers `Result`; there is no `ActionOutcome`.
+//// Decision 303 — An action answers `@Result`; there is no `ActionOutcome`.
 
 import {io.terminal} from "std";
 import {collections.Dict} from "std";
