@@ -7,7 +7,7 @@ pub type Form {
     // `Field` is declared in `Form`'s body, so it is `Form`'s associated type.
     pub type Field(name: string, message: ?string)
 
-    pub fn fields(envelope: string) -> Array<Form.Field> {
+    pub fn fields(envelope: string) -> Form.Field[] {
         return parseActionState(envelope).fields.map(
             { f -> Form.Field(name: f._0, message: if (f._1 == "") null else f._1) },
         );
@@ -28,10 +28,7 @@ pub fn main() -> void {
     val read = readEnvelope(text);
     terminal.print(read.isOk());
     val revalidated = read.map({ e -> e.revalidated }).unwrapOr([]);
-    val fields: ?Array<Form.Field> = if (read.isOk())
-        Form.fields(text)
-    else
-        null;
+    val fields: ?Form.Field[] = if (read.isOk()) Form.fields(text) else null;
     val first = fields?.[0];
     terminal.print(first?.name ?? "no field");
     terminal.print(first?.message ?? hint(true)?.("email") ?? "");

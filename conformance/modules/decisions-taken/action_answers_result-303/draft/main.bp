@@ -7,10 +7,10 @@ import {outcome.ActionError} from "actions";
 pub type Subscribed(email: string)
 
 // The action's body: `return v` is `Ok(v)`, `throw e` an `Error(e)` value.
-fn subscribe(
+async fn subscribe(
     email: string,
     session: ?string,
-) -> Task<Result<Subscribed, ActionError>> {
+) -> Async<Result<Subscribed, ActionError>> {
     if (session == null)
         throw ActionError.Unauthorized(message: "User must be logged in.");
     if (!email.contains("@"))
@@ -21,7 +21,7 @@ fn subscribe(
 }
 
 // A caller that only goes on when the action answered `Ok`.
-fn welcome(email: string, session: ?string) -> Task<Result<string, ActionError>> {
+async fn welcome(email: string, session: ?string) -> Async<Result<string, ActionError>> {
     val s = try await subscribe(email, session);
     return "welcome " + s.email;
 }
@@ -35,7 +35,7 @@ fn show(r: Result<Subscribed, ActionError>) -> string {
     };
 }
 
-pub fn main() -> Task<void> {
+pub async fn main() -> Async<void> {
     terminal.print(show(await subscribe("ana@example.com", "s1")));
     terminal.print(show(await subscribe("ana", "s1")));
     terminal.print(show(await subscribe("ana@example.com", null)));

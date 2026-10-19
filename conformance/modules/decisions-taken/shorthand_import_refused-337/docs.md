@@ -4,7 +4,7 @@ The example prints a form's summary line. `draft/form.bp` is a module of the pac
 
 The refused spelling is the shorthand. `import {summary};` has no `from`, and its first segment does not name a module of the package. It is refused with `shorthand-import` at the item. Only `form` declares `summary` as `pub`, so the error gives the fix: `write import {form.summary};`, which is the line the example uses. A bare `import {parseState};` does not reach the library either, even though only `actions` declares that name; it has to be written `from "actions"`.
 
-The decision's parts on `mod` / `pub mod` namespaces and re-export by value are overtaken by decision 592 (ctr-x): a file is a module, and there is no `mod`.
+337 (2)'s `mod m;` namespace is replaced by decision 592 (1): every `.bp` under `src/` is a module, its path its name, and there is no `mod` / `pub mod`; with 337 (3) there is no combined form and no re-export syntax.
 
 Cells in this repository that prove it: none yet. The library's modules already import each other by path (`import {state.ActionState, state.parseState};` in `src/envelope.bp`). Its feature cells come with front 159's Conformance step (decision 465).
 
