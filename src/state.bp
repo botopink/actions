@@ -15,7 +15,7 @@ pub type ActionState(
     ok: bool,
     message: string,
     redirectTo: string,
-    fields: Array<#(string, string)>,
+    fields: array<#(string, string)>,
 ) {
     // The message of field `name`, `""` when it has none.
     pub fn fieldError(self: Self, name: string) -> string {
@@ -30,7 +30,7 @@ pub type ActionState(
 
 // The body of `fieldError`, as a module fn: an array's `at` inside a method
 // body is not dispatched on erlang (`unwrapOr/2 undefined`) nor on commonJS.
-fn fieldErrorOf(fields: Array<#(string, string)>, name: string) -> string {
+fn fieldErrorOf(fields: array<#(string, string)>, name: string) -> string {
     val hit = fields.filter({ f -> f._0 == name });
     return (hit.at(0) ?? #("", ""))._1;
 }
@@ -42,8 +42,8 @@ pub fn newActionState(message: string) -> ActionState {
 }
 
 // `message=<message>&f.<name>=<text>…`, percent-encoded.
-pub fn writeState(message: string, fields: Array<#(string, string)>) -> string {
-    var pairs: Array<#(string, string)> = [#("message", message)];
+pub fn writeState(message: string, fields: array<#(string, string)>) -> string {
+    var pairs: array<#(string, string)> = [#("message", message)];
     for (fields) { f ->
         pairs.push(#(["f.", f._0].join(""), f._1));
     }
@@ -52,7 +52,7 @@ pub fn writeState(message: string, fields: Array<#(string, string)>) -> string {
 
 // The inverse of `writeState`: `#(message, fields)`. A key that is neither
 // `message` nor `f.`-prefixed is ignored; `""` reads as `#("", [])`.
-pub fn parseState(state: string) -> #(string, Array<#(string, string)>) {
+pub fn parseState(state: string) -> #(string, array<#(string, string)>) {
     val pairs = encoding.formParse(state);
     val messages = pairs.filter({ p -> p._0 == "message" });
     val message = (messages.at(0) ?? #("", ""))._1;

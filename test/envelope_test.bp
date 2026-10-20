@@ -9,7 +9,7 @@ import {envelope.ActionEnvelope, envelope.writeEnvelope, envelope.readEnvelope, 
 fn env(
     ok: bool,
     state: string,
-    revalidated: Array<string>,
+    revalidated: array<string>,
     n: string,
     payload: string,
 ) -> ActionEnvelope {

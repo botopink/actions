@@ -11,7 +11,7 @@
 
 import {json.Json, json.decode, json.quote, json.array, json.object} from "std";
 
-pub type RpcCall(id: string, args: Array<string>)
+pub type RpcCall(id: string, args: array<string>)
 
 pub fn writeRpcBody(call: RpcCall) -> string {
     return object(

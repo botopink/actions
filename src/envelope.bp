@@ -22,7 +22,7 @@ import {state.ActionState, state.parseState};
 pub type ActionEnvelope(
     ok: bool,
     state: string,
-    revalidated: Array<string>,
+    revalidated: array<string>,
     n: string,
     payload: string,
 )
@@ -91,7 +91,7 @@ fn readBool(root: Json, key: string) -> Result<bool, string> {
     return boolOf(v);
 }
 
-fn readStrings(root: Json, key: string) -> Result<Array<string>, string> {
+fn readStrings(root: Json, key: string) -> Result<array<string>, string> {
     val v = root.field(key) ?? Json.Arr(items: []);
     if (v.kindName() != "an array")
         throw wrongKind(key, "an array of strings", v);
