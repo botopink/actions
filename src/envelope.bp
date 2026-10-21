@@ -6,7 +6,7 @@
 //// routing's `signalToWire` form, and `redirect` is DERIVED from it inside
 //// `writeEnvelope` (the location of a redirect signal, `""` otherwise) — it has
 //// no parameter, so no envelope can carry a `redirect` that disagrees with its
-//// signal. JSON is written with std's `json.quote` / `json.array` /
+//// signal. JSON is written with std's `json.quote` / `json.arrayOf` /
 //// `json.object` (every control character escaped) and read with std's
 //// `json.decode`, the same botopink on both targets.
 ////
@@ -15,7 +15,7 @@
 //// of the wrong JSON kind are each an `Error` naming what was wrong. A missing
 //// key other than `v` reads as its empty value; an unknown key is ignored.
 
-import {json.Json, json.decode, json.quote, json.array, json.object} from "std";
+import {json.Json, json.decode, json.quote, json.arrayOf, json.object} from "std";
 import {navigation.NavKind, navigation.signalFromWire} from "routing";
 import {state.ActionState, state.parseState};
 
@@ -43,7 +43,7 @@ pub fn writeEnvelope(e: ActionEnvelope) -> string {
             #("v", "1"),
             #("ok", ok),
             #("state", quote(e.state)),
-            #("revalidated", array(e.revalidated.map({ r -> quote(r) }))),
+            #("revalidated", arrayOf(e.revalidated.map({ r -> quote(r) }))),
             #("redirect", quote(redirectOf(e.n))),
             #("n", quote(e.n)),
             #("payload", quote(e.payload)),

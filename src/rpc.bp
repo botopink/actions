@@ -9,7 +9,7 @@
 //// server answers it as a 400. A missing `args` is the empty list; an unknown
 //// key is ignored.
 
-import {json.Json, json.decode, json.quote, json.array, json.object} from "std";
+import {json.Json, json.decode, json.quote, json.arrayOf, json.object} from "std";
 
 pub type RpcCall(id: string, args: array<string>)
 
@@ -18,7 +18,7 @@ pub fn writeRpcBody(call: RpcCall) -> string {
         [
             #("v", "1"),
             #("id", quote(call.id)),
-            #("args", array(call.args.map({ a -> quote(a) }))),
+            #("args", arrayOf(call.args.map({ a -> quote(a) }))),
         ],
     );
 }
