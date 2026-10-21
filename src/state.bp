@@ -44,7 +44,7 @@ pub fn newActionState(message: string) -> ActionState {
 // `message=<message>&f.<name>=<text>…`, percent-encoded.
 pub fn writeState(message: string, fields: array<#(string, string)>) -> string {
     var pairs: array<#(string, string)> = [#("message", message)];
-    for (fields) { f ->
+    for f in fields {
         pairs.push(#(["f.", f._0].join(""), f._1));
     }
     return encoding.formStringify(pairs);
