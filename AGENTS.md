@@ -35,7 +35,7 @@ declares no JSON accessor of its own.
 
 ```text
 actions/
-├── botopink.json      "name": "actions", "target": "erlang", "targets": ["erlang", "commonJS"]
+├── botopink.json      "name": "actions", "target": "erlang", no "targets" — all four, wasm included (decision 993 (4))
 ├── AGENTS.md
 ├── src/root.bp        pub mod state; pub mod envelope; pub mod rpc; pub mod refresh; pub mod id;
 ├── src/state.bp       ActionState (fieldError, hasError), newActionState, writeState, parseState
